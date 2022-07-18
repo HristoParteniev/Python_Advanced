@@ -8,7 +8,7 @@ for c in range(1,48):
                 print(f" {a}, {b}, {c}, total combinations: {counter}")
                 
 ################## 2nd solution ###############
-#
+
 second_counter = 0
 
 for f in range(1,48):
