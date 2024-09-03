@@ -36,8 +36,8 @@ class CSVDataset(Dataset): # – inherits Dataset and implements all its methods
         return self._src_filepath
 
     @src_filepath.setter
-    def src_filepath(self):
-        return self._src_filepath
+    def src_filepath(self, value):
+        self._src_filepath = value
 
     @property
     def target_filepath(self):
@@ -45,8 +45,8 @@ class CSVDataset(Dataset): # – inherits Dataset and implements all its methods
         return self._target_filepath
 
     @target_filepath.setter
-    def target_filepath(self):
-        return self._target_filepath
+    def target_filepath(self, value):
+        self._target_filepath = value
 
     def __repr__(self) -> str:
         return f"CSVDataset(src_filepath='{self._src_filepath}',\
@@ -81,6 +81,12 @@ class CSVDataset(Dataset): # – inherits Dataset and implements all its methods
         else:
             print("No data to transform.")
 
+    def fetch_and_prepare_data(self):
+        """Public method to fetch, clean, and transform the data and not run protected methods."""
+        self._fetch_data()
+        self._clean_data()
+        self._transform_data()
+
     def save_data(self):
         if self.data is not None:
             try:
@@ -101,9 +107,7 @@ def main():
     'OneDrive - Adastra, s.r.o\\Desktop\\employement-data_edited_Hristo_Parteniev.csv')
 
     dataset = CSVDataset(src_path, tgt_path)
-    dataset._fetch_data()
-    dataset._clean_data()
-    dataset._transform_data()
+    dataset.fetch_and_prepare_data()
     dataset.save_data()
 
 if __name__ == '__main__':
