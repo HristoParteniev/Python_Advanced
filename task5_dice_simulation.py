@@ -19,12 +19,7 @@ class Simulation:
     """class Simulation is used to create a game"""
 
     final_sum = 0
-    count_1 = 0
-    count_2 = 0
-    count_3 = 0
-    count_4 = 0
-    count_5 = 0
-    count_6 = 0
+    counts = {i: 0 for i in range(1, 7)}
 
     sums_per_iteration = []
 
@@ -45,18 +40,7 @@ class Simulation:
 
             for dice in self.dices:
                 Simulation.final_sum += dice.outcome
-                if dice.outcome == 1:
-                    Simulation.count_1 += 1
-                elif dice.outcome == 2:
-                    Simulation.count_2 += 1
-                elif dice.outcome == 3:
-                    Simulation.count_3 += 1
-                elif dice.outcome == 4:
-                    Simulation.count_4 += 1
-                elif dice.outcome == 5:
-                    Simulation.count_5 += 1
-                elif dice.outcome == 6:
-                    Simulation.count_6 += 1
+                Simulation.counts[dice.outcome] +=1
 
 game1 = Simulation(50000, 2)
 Simulation.get_game_results(game1)
@@ -64,12 +48,12 @@ Simulation.get_game_results(game1)
 print(f"     Num of dices: {game1.number_of_dices}. \n \
     Num of rolls: {game1.number_of_rolls} \n \
     Final Sum: {Simulation.final_sum} \n \
-    Count of 1s: {Simulation.count_1} \n \
-    Count of 2s: {Simulation.count_2} \n \
-    Count of 3s: {Simulation.count_3} \n \
-    Count of 4s: {Simulation.count_4} \n \
-    Count of 5s: {Simulation.count_5} \n \
-    Count of 6s: {Simulation.count_6} \n \
+    Count of 1s: {Simulation.counts[1]} \n \
+    Count of 2s: {Simulation.counts[2]} \n \
+    Count of 3s: {Simulation.counts[3]} \n \
+    Count of 4s: {Simulation.counts[4]} \n \
+    Count of 5s: {Simulation.counts[5]} \n \
+    Count of 6s: {Simulation.counts[6]} \n \
     sums_per_iteration: {list(Simulation.sums_per_iteration)}")
 
 sorted_elements = list(sorted(set(Simulation.sums_per_iteration)))
@@ -81,6 +65,7 @@ plt.ylabel('Number of Rolls Per Outcome')
 
 x = sorted_elements
 y = count_of_each_outcome
+print(list(Simulation.counts.items()))
 
 plt.bar(x, y)
 plt.show()
