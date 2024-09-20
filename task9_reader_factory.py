@@ -9,7 +9,7 @@ class Reader(ABC):
         super().__init__()
 
     @abstractmethod
-    def read():
+    def read(self):
         pass
 
 class CSVReader(Reader):
@@ -18,6 +18,7 @@ class CSVReader(Reader):
         self._src_filepath = src_filepath
         self._target_filepath = target_filepath
         self.data = None
+        self.reader_type = "CSVReader"
 
     @property
     def src_filepath(self):
@@ -65,6 +66,7 @@ class JSONReader(Reader):
         self._src_filepath = src_filepath
         self._target_filepath = target_filepath
         self.data = None
+        self.reader_type = "JSONReader"
 
     @property
     def src_filepath(self):
@@ -111,6 +113,7 @@ class DatabaseReader(Reader):
         super().__init__()
         self._query = query
         self.data = None
+        self.reader_type = "DatabaseReader"
 
     def __repr__(self) -> str:
         return f"DatabaseReader(query='{self._query}')"
@@ -135,9 +138,19 @@ class DatabaseReader(Reader):
 class ReaderFactory():
 
     @staticmethod
-    def get_reader(reader_obj):
-        return f"{reader_obj} \nis instance of Class:{type(reader_obj).__name__}."
+    def get_reader(reader_type: str, *args)-> Reader:
 
+        type = reader_type.lower()
+        readers = {
+            'csv': CSVReader,
+            'json': JSONReader,
+            'db': DatabaseReader
+        }
+
+        if type not in readers.keys():
+            raise ValueError(f"Unknown reader type: {reader_type}")
+        else:
+            return readers[type](*args)
 
 
 def main():
@@ -152,29 +165,23 @@ def main():
         'OneDrive - Adastra, s.r.o\\Desktop\\users_1k.json')
         json_tgt_path = os.path.join(os.path.expanduser("~"),
         'OneDrive - Adastra, s.r.o\\Desktop\\users_1k_edited_Hristo_Parteniev.json')
+        query = "select  * from dbo.DimOrganization;"
 
-        csv_dataset = CSVReader(csv_src_path, csv_tgt_path)
-        csv_dataset.read()
-        print(csv_dataset.data.head(20))
-
-        json_dataset = JSONReader(json_src_path, json_tgt_path)
-        json_dataset.read()
-        print(json_dataset.data.head(20))
-
-        db_dataset = DatabaseReader("select  * from dbo.DimOrganization;")
-        db_dataset.read()
-
-        print('\n')
-        print('*' * 120)
-        print(ReaderFactory.get_reader(db_dataset))
-        print('*' * 120)
-        print(ReaderFactory.get_reader(json_dataset))
-        print('*' * 120)
-        print(ReaderFactory.get_reader(csv_dataset))
-        print('*' * 120)
+        csv_reader = ReaderFactory.get_reader('csv', csv_src_path, csv_tgt_path)
+        print('#' * 120)
+        print(csv_reader)
+        print('#' * 120)
+        #print(csv_reader.read())
+        json_reader = ReaderFactory.get_reader('json', json_src_path, json_tgt_path)
+        print(json_reader)
+        print('#' * 120)
+        #print(json_reader.read())
+        db_reader = ReaderFactory.get_reader('db', query)
+        print(db_reader)
+        print('#' * 120)
+        #print(db_reader.read())
     except Exception as exc:
-        print(f"Error {exc} occured.")
-
+        print(f"Error {exc} occured!!!")
 
 if __name__ == '__main__':
     main()
